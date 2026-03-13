@@ -163,8 +163,6 @@ http://127.0.0.1:8000
 GitHub:
 https://github.com/Mounika-140
 
----
 
-## 📄 License
 
-This project is licensed under the **MIT License**.
+
