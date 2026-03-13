@@ -102,7 +102,7 @@ eventhub-django/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/eventhub-django.git
+git clone https://github.com/Mounika-140/eventhub-django.git
 cd eventhub-django
 ```
 
@@ -158,7 +158,7 @@ http://127.0.0.1:8000
 
 ## 👩‍💻 Author
 
-**Mounika**
+**Mounika Pogiri**
 
 GitHub:
 https://github.com/Mounika-140
