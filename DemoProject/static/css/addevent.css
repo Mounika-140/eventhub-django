@@ -1,0 +1,385 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f0f2f5;
+}
+
+/* ============ NAVBAR ============ */
+.ae-navbar {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  padding: 0 30px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.ae-nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.ae-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.ae-logo-icon {
+  font-size: 24px;
+}
+
+.ae-highlight {
+  color: #a78bfa;
+}
+
+.ae-nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.ae-back-btn {
+  color: #94a3b8;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.ae-back-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+
+/* ============ PAGE LAYOUT ============ */
+.ae-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 36px 24px 60px;
+}
+
+/* Page Header */
+.ae-page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.ae-header-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 26px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+}
+
+.ae-page-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.ae-page-header p {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+
+/* ============ FORM CARD ============ */
+.ae-form-card {
+  background: white;
+  border-radius: 22px;
+  padding: 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f3f4f6;
+}
+
+/* Alerts */
+.ae-alert {
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ae-alert-success {
+  background: #dcfce7;
+  color: #166534;
+  border-left: 4px solid #22c55e;
+}
+
+.ae-alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+/* Sections */
+.ae-section {
+  margin-bottom: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ae-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ae-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ae-section-icon {
+  width: 38px;
+  height: 38px;
+  background: #ede9fe;
+  color: #7c3aed;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.ae-section-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Form Grid */
+.ae-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.ae-input-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.ae-input-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.ae-input-group label i {
+  color: #7c3aed;
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+}
+
+.ae-input-group input,
+.ae-input-group textarea,
+.ae-input-group select {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s;
+  background: #fafbfc;
+  color: #1f2937;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.ae-input-group input:focus,
+.ae-input-group textarea:focus,
+.ae-input-group select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+  background: white;
+}
+
+.ae-input-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Upload Area */
+.ae-upload-area {
+  border: 2px dashed #c7d2fe;
+  border-radius: 16px;
+  padding: 40px 30px;
+  text-align: center;
+  background: #faf5ff;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.ae-upload-area:hover {
+  border-color: #7c3aed;
+  background: #f3e8ff;
+}
+
+.ae-upload-area i {
+  font-size: 36px;
+  color: #7c3aed;
+  margin-bottom: 12px;
+}
+
+.ae-upload-area p {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.ae-upload-area span {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.ae-upload-area input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Submit Button */
+.ae-submit-btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+}
+
+.ae-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+}
+
+.ae-submit-btn:active {
+  transform: translateY(0);
+}
+
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .ae-navbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .ae-logo {
+    font-size: 16px;
+  }
+
+  .ae-page {
+    padding: 20px 14px 40px;
+  }
+
+  .ae-page-header h1 {
+    font-size: 22px;
+  }
+
+  .ae-form-card {
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+
+  .ae-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ae-header-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ae-navbar {
+    padding: 0 12px;
+    height: 56px;
+  }
+
+  .ae-logo {
+    font-size: 14px;
+  }
+
+  .ae-back-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .ae-form-card {
+    padding: 20px 16px;
+  }
+
+  .ae-section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+  }
+
+  .ae-submit-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  .ae-upload-area {
+    padding: 28px 20px;
+  }
+}

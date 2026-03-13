@@ -1,0 +1,303 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ event.title }} | CampusEvents</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .event-detail-page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .event-header {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .event-hero {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .event-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .event-hero.no-image {
+            color: #c7d2fe;
+        }
+
+        .event-body {
+            padding: 40px;
+        }
+
+        .event-body h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .event-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .meta-item {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border-left: 4px solid #7c3aed;
+        }
+
+        .meta-item label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .meta-item span {
+            display: block;
+            font-size: 16px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .event-description {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        .event-description h3 {
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .event-description p {
+            line-height: 1.7;
+            color: #374151;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        @media (max-width: 768px) {
+            .event-detail-page {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .event-hero {
+                height: 250px;
+            }
+
+            .event-body {
+                padding: 20px;
+            }
+
+            .event-body h1 {
+                font-size: 24px;
+            }
+
+            .event-meta {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .event-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .event-body {
+                padding: 15px;
+            }
+
+            .event-body h1 {
+                font-size: 20px;
+            }
+
+            .event-hero {
+                height: 200px;
+            }
+
+            .meta-item {
+                padding: 12px;
+            }
+
+            .meta-item label {
+                font-size: 11px;
+            }
+
+            .meta-item span {
+                font-size: 14px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar">
+    <div class="logo">
+        <div class="logo-icon">🎓</div>
+        <span>Campus<span class="highlight">Events</span></span>
+    </div>
+
+    <nav class="nav-links">
+        <a href="{% url 'student_dashboard' %}" class="nav-link">🏠 Home</a>
+        <a href="{% url 'my_events' %}" class="nav-link">📅 My Events</a>
+        <a href="{% url 'student_profile' %}" class="nav-link">👤 Profile</a>
+        <a href="{% url 'logout' %}" class="nav-link">🚪 Logout</a>
+    </nav>
+
+    <div class="avatar">
+        {{ request.user.username|first|upper }}
+    </div>
+</header>
+
+<!-- Event Detail Content -->
+<div class="event-detail-page">
+    <div class="event-header">
+        <div class="event-hero {% if not event.poster %}no-image{% endif %}">
+            {% if event.poster %}
+                <img src="{{ event.poster.url }}" alt="{{ event.title }}" onerror="this.style.display='none'">
+            {% else %}
+                <i class="fa-solid fa-image fa-4x"></i>
+            {% endif %}
+        </div>
+
+        <div class="event-body">
+            <h1>{{ event.title }}</h1>
+
+            <div class="event-meta">
+                <div class="meta-item">
+                    <label><i class="fas fa-folder"></i> Category</label>
+                    <span>{{ event.category.name }}</span>
+                </div>
+
+                <div class="meta-item">
+                    <label><i class="fas fa-calendar"></i> Date</label>
+                    <span>{{ event.date }}</span>
+                </div>
+
+                <div class="meta-item">
+                    <label><i class="fas fa-clock"></i> Time</label>
+                    <span>{{ event.time }}</span>
+                </div>
+
+                <div class="meta-item">
+                    <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <span>{{ event.venue }}</span>
+                </div>
+
+                <div class="meta-item">
+                    <label><i class="fas fa-building"></i> Organization</label>
+                    <span>{{ event.college.name }}</span>
+                </div>
+
+                <div class="meta-item">
+                    <label><i class="fas fa-globe"></i> Region</label>
+                    <span>{{ event.region.name }}</span>
+                </div>
+
+                <div class="meta-item">
+                    {% if event.payment_type == 'paid' %}
+                        <label><i class="fas fa-credit-card"></i> Price</label>
+                        <span>₹{{ event.price }}</span>
+                    {% else %}
+                        <label><i class="fas fa-gift"></i> Type</label>
+                        <span>Free Event</span>
+                    {% endif %}
+                </div>
+
+                <div class="meta-item">
+                    <label><i class="fas fa-users"></i> Seats</label>
+                    <span>{{ event.seats_left }}/{{ event.total_seats }} Available</span>
+                </div>
+            </div>
+
+            <div class="event-description">
+                <h3>📝 Description</h3>
+                <p>{{ event.description }}</p>
+            </div>
+
+            <div class="event-actions">
+                {% if event.seats_left > 0 %}
+                    <a href="{% url 'register_event' event.id %}" class="btn-primary">✅ Register Now</a>
+                {% else %}
+                    <button class="btn-primary" disabled style="opacity: 0.6; cursor: not-allowed;">❌ Event Full</button>
+                {% endif %}
+                <a href="{% url 'student_dashboard' %}" class="btn-secondary">← Back to Events</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

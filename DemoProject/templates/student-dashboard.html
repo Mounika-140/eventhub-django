@@ -1,0 +1,503 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard | CampusEvents</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            <span>Campus<span class="highlight">Events</span></span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="{% url 'student_dashboard' %}" data-nav="home" class="nav-link active">🏠 Home</a>
+            <a href="{% url 'my_events' %}" data-nav="events" class="nav-link">📅 My Events</a>
+            <a href="{% url 'student_profile' %}" data-nav="profile" class="nav-link">👤 Profile</a>
+            <a href="{% url 'logout' %}" data-nav="logout" class="nav-link">🚪 Logout</a>
+        </nav>
+
+        <div class="avatar">
+            {{ request.user.username|first|upper }}
+        </div>
+    </header>
+
+
+    <div class="container">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <h2>{{ request.user.username }}</h2>
+
+                <div class="stats">
+                    <div>
+                        <h3>{{ participated_count|default:0 }}</h3>
+                        <p>Participations</p>
+                    </div>
+                    <div>
+                        <h3 class="gold">0</h3>
+                        <p>Gold</p>
+                    </div>
+                    <div>
+                        <h3>0</h3>
+                        <p>Silver</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mini-cards">
+                <div class="mini-card">
+                    <div class="icon">📅</div>
+                    <h2>{{ events|length }}</h2>
+                    <p>Total Events</p>
+                </div>
+
+                <div class="mini-card">
+                    <div class="icon">🏛️</div>
+                    <h2>{{ colleges_count|default:0 }}</h2>
+                    <p>Colleges</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Main Content -->
+        <div class="main">
+
+            <div class="heading">
+                <h1>✨ Discover Events</h1>
+                <p>Explore inter-college events, competitions, and workshops</p>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="filter-box">
+
+                <input type="text" id="searchInput" placeholder="Search events by name, college, or venue..." />
+
+                <div class="filters">
+
+                    <select id="collegeFilter">
+                        <option value="">All Colleges</option>
+                        {% for college in colleges %}
+                        <option value="{{ college.id }}">{{ college.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="regionFilter">
+                        <option value="">All Regions</option>
+                        {% for region in regions %}
+                        <option value="{{ region.id }}">{{ region.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="completed">Completed</option>
+                    </select>
+
+                    <select id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="free">Free</option>
+                        <option value="paid">Paid</option>
+                    </select>
+
+                    <button class="filter-btn" id="applyFilterBtn">🔍 Filter</button>
+                    <button class="filter-btn reset" id="resetFilterBtn">🔄 Reset</button>
+
+                </div>
+            </div>
+
+
+            <!-- Events Section -->
+            <h2 class="section-title">All Events</h2>
+
+            {% if events %}
+            <div class="events-grid" id="eventsGrid">
+                {% for event in events %}
+                <div class="event-card" data-event-id="{{ event.id }}" data-college="{{ event.college.id }}"
+                    data-region="{{ event.region.id }}" data-type="{{ event.payment_type }}"
+                    data-date="{{ event.date }}">
+                    <div class="event-poster" onclick="viewEventDetails({{ event.id }})">
+                        {% if event.poster %}
+                        <img src="{{ event.poster.url }}" alt="{{ event.title }}" class="poster-img">
+                        {% else %}
+                        <i class="fa-solid fa-image fa-2x"></i>
+                        <span>No Image</span>
+                        {% endif %}
+                    </div>
+                    <div class="event-details">
+                        <h3>{{ event.title }}</h3>
+                        <p><i class="fas fa-building"></i> {{ event.college.name }}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ event.venue }}</p>
+                        <p><i class="fas fa-calendar"></i> {{ event.date }}</p>
+                        <p><i class="fas fa-clock"></i> {{ event.time }}</p>
+
+                        {% if event.payment_type == 'paid' %}
+                        <span class="badge paid">💰 Paid (₹{{ event.price }})</span>
+                        {% else %}
+                        <span class="badge free">🎁 Free</span>
+                        {% endif %}
+
+                        <button class="join-btn" onclick="viewEventDetails({{ event.id }})">
+                            🚀 View Details
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-events">
+                <div class="calendar-icon">📅</div>
+                <p>No Events Found</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEventModal()">&times;</span>
+            <div id="eventDetailContent">
+                <!-- Content will be loaded here via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script>
+        // @ts-nocheck
+        // Event data from Django template
+        const allEvents = [
+            {% for event in events %}
+            {
+                id: {{ event.id }},
+                title: "{{ event.title|escapejs }}",
+                description: "{{ event.description|escapejs }}",
+                category: "{{ event.category.name|escapejs }}",
+                college: "{{ event.college.name|escapejs }}",
+                region: "{{ event.region.name|escapejs }}",
+                collegeId: {{ event.college.id }},
+                regionId: {{ event.region.id }},
+                date: "{{ event.date }}",
+                time: "{{ event.time|escapejs }}",
+                venue: "{{ event.venue|escapejs }}",
+                paymentType: "{{ event.payment_type|escapejs }}",
+                price: "{{ event.price|default:0 }}",
+                seatsLeft: {{ event.seats_left }},
+                totalSeats: {{ event.total_seats }},
+                poster: "{% if event.poster %}{{ event.poster.url|escapejs }}{% endif %}"
+            },
+            {% endfor %}
+        ];
+
+        // Filter state
+        const filterState = {
+            search: '',
+            college: '',
+            region: '',
+            status: '',
+            type: ''
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            setupNavigation();
+            setupFilters();
+        });
+
+        // Setup Navigation
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const nav = this.getAttribute('data-nav');
+
+                    if (nav === 'logout') {
+                        window.location.href = this.href;
+                        return;
+                    }
+
+                    // Let all links navigate normally
+                    window.location.href = this.href;
+                });
+            });
+        }
+
+        // Setup Filters
+        function setupFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const collegeFilter = document.getElementById('collegeFilter');
+            const regionFilter = document.getElementById('regionFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const typeFilter = document.getElementById('typeFilter');
+            const applyBtn = document.getElementById('applyFilterBtn');
+            const resetBtn = document.getElementById('resetFilterBtn');
+
+            applyBtn.addEventListener('click', applyFilters);
+            resetBtn.addEventListener('click', resetFilters);
+
+            searchInput.addEventListener('keyup', function () {
+                filterState.search = this.value.toLowerCase();
+                applyFilters();
+            });
+
+            collegeFilter.addEventListener('change', applyFilters);
+            regionFilter.addEventListener('change', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            typeFilter.addEventListener('change', applyFilters);
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            filterState.college = document.getElementById('collegeFilter').value;
+            filterState.region = document.getElementById('regionFilter').value;
+            filterState.status = document.getElementById('statusFilter').value;
+            filterState.type = document.getElementById('typeFilter').value;
+
+            const filtered = filterEvents();
+            renderEvents(filtered);
+        }
+
+        // Filter Events
+        function filterEvents() {
+            return allEvents.filter(event => {
+                // Search filter
+                if (filterState.search &&
+                    !event.title.toLowerCase().includes(filterState.search) &&
+                    !event.college.toLowerCase().includes(filterState.search) &&
+                    !event.venue.toLowerCase().includes(filterState.search)) {
+                    return false;
+                }
+
+                // College filter
+                if (filterState.college && event.collegeId != filterState.college) {
+                    return false;
+                }
+
+                // Region filter
+                if (filterState.region && event.regionId != filterState.region) {
+                    return false;
+                }
+
+                // Type filter
+                if (filterState.type && event.paymentType !== filterState.type) {
+                    return false;
+                }
+
+                // Status filter
+                if (filterState.status) {
+                    const today = new Date();
+                    const eventDate = new Date(event.date);
+
+                    if (filterState.status === 'upcoming' && eventDate < today) {
+                        return false;
+                    }
+                    if (filterState.status === 'completed' && eventDate >= today) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+        }
+
+        // Render Events
+        function renderEvents(events) {
+            const grid = document.getElementById('eventsGrid');
+
+            if (events.length === 0) {
+                grid.innerHTML = `
+                <div class="empty-events" style="grid-column: 1/-1;">
+                    <div class="calendar-icon">📅</div>
+                    <p>No Events Found</p>
+                </div>
+            `;
+                return;
+            }
+
+            grid.innerHTML = events.map(event => `
+            <div class="event-card" data-event-id="${event.id}">
+                <div class="event-poster" onclick="viewEventDetails(${event.id})">
+                    ${event.poster ?
+                    `<img src="${event.poster}" alt="${event.title}" class="poster-img">` :
+                    `<i class="fa-solid fa-image fa-2x"></i><span>No Image</span>`
+                }
+                </div>
+                <div class="event-details">
+                    <h3>${event.title}</h3>
+                    <p><i class="fas fa-building"></i> ${event.college}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> ${event.venue}</p>
+                    <p><i class="fas fa-calendar"></i> ${event.date}</p>
+                    <p><i class="fas fa-clock"></i> ${event.time}</p>
+                    
+                    ${event.paymentType === 'paid' ?
+                    `<span class="badge paid">💰 Paid (₹${event.price})</span>` :
+                    `<span class="badge free">🎁 Free</span>`
+                }
+                    
+                    <button class="join-btn" onclick="viewEventDetails(${event.id})">
+                        🚀 View Details
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        // View Event Details
+        function viewEventDetails(eventId) {
+            const event = allEvents.find(e => e.id === eventId);
+            if (!event) return;
+
+            const modal = document.getElementById('eventModal');
+            const content = document.getElementById('eventDetailContent');
+
+            const seatsStatus = event.seatsLeft > 0 ?
+                `<span class="seats-available">Seats Available: ${event.seatsLeft}/${event.totalSeats}</span>` :
+                `<span class="seats-full">No Seats Available</span>`;
+
+            content.innerHTML = `
+            <div class="event-modal-header">
+                ${event.poster ?
+                    `<img src="${event.poster}" alt="${event.title}" class="modal-poster">` :
+                    `<div class="modal-poster no-image"><i class="fa-solid fa-image fa-3x"></i></div>`
+                }
+            </div>
+            <div class="event-modal-body">
+                <h2>${event.title}</h2>
+                
+                <div class="event-info">
+                    <div class="info-item">
+                        <label>Category:</label>
+                        <span>${event.category}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Organization:</label>
+                        <span>${event.college}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Region:</label>
+                        <span>${event.region}</span>
+                    </div>
+                </div>
+
+                <div class="event-datetime">
+                    <div class="datetime-item">
+                        <i class="fas fa-calendar"></i>
+                        <div>
+                            <label>Date</label>
+                            <span>${event.date}</span>
+                        </div>
+                    </div>
+                    <div class="datetime-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <label>Time</label>
+                            <span>${event.time}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <label>Location</label>
+                        <span>${event.venue}</span>
+                    </div>
+                </div>
+
+                <div class="event-description">
+                    <label>Description</label>
+                    <p>${event.description}</p>
+                </div>
+
+                <div class="event-payment">
+                    <i class="fas fa-credit-card"></i>
+                    <div>
+                        <label>Payment</label>
+                        <span>${event.paymentType === 'paid' ? `₹${event.price}` : 'Free'}</span>
+                    </div>
+                </div>
+
+                <div class="event-seats">
+                    ${seatsStatus}
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-register" onclick="registerForEvent(${eventId})">
+                        ✅ Register Now
+                    </button>
+                    <button class="btn-close" onclick="closeEventModal()">
+                        ❌ Close
+                    </button>
+                </div>
+            </div>
+        `;
+
+            modal.style.display = 'block';
+        }
+
+        // Close Event Modal
+        function closeEventModal() {
+            const modal = document.getElementById('eventModal');
+            modal.style.display = 'none';
+        }
+
+        // Register for Event
+        function registerForEvent(eventId) {
+            window.location.href = `{% url 'register_event' 0 %}`.replace('0', eventId);
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            filterState.search = '';
+            filterState.college = '';
+            filterState.region = '';
+            filterState.status = '';
+            filterState.type = '';
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('collegeFilter').value = '';
+            document.getElementById('regionFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+
+            renderEvents(allEvents);
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function (event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target === modal) {
+                closeEventModal();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

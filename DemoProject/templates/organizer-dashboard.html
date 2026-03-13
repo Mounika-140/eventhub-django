@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Organizer Dashboard | CampusEvents</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/organizer-dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="org-navbar">
+        <div class="org-nav-left">
+            <div class="org-logo">
+                <div class="org-logo-icon">🏢</div>
+                <span>Campus<span class="org-highlight">Events</span></span>
+            </div>
+        </div>
+        <div class="org-nav-center">
+            <a href="{% url 'organizer_dashboard' %}" class="org-nav-link active">
+                <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a href="{% url 'add_event' %}" class="org-nav-link">
+                <i class="fas fa-plus-circle"></i> Add Event
+            </a>
+        </div>
+        <div class="org-nav-right">
+            <div class="org-user-info">
+                <span class="org-username">{{ request.user.username }}</span>
+                <div class="org-avatar">{{ request.user.username|first|upper }}</div>
+            </div>
+            <a href="{% url 'logout' %}" class="org-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <div>
+                <h1><i class="fas fa-chart-line"></i> Organizer Dashboard</h1>
+                <p>Manage your events and track registrations</p>
+            </div>
+            <a href="{% url 'add_event' %}" class="add-event-btn">
+                <i class="fa-solid fa-plus"></i> Create New Event
+            </a>
+        </div>
+
+        <!-- Messages -->
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <i class="fas fa-info-circle"></i> {{ message }}
+        </div>
+        {% endfor %}
+
+        <!-- SUMMARY SECTION -->
+        <div class="summary">
+            <div class="card">
+                <div class="card-icon" style="background: #ede9fe; color: #7c3aed;">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h2>{{ events|length }}</h2>
+                <p>Total Events</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: #dcfce7; color: #16a34a;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 id="activeEventsCount">{{ active_events }}</h2>
+                <p>Active Events</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: #fee2e2; color: #dc2626;">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h2 id="closedEventsCount">{{ closed_events }}</h2>
+                <p>Closed Events</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: #dbeafe; color: #2563eb;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2 id="totalRegistrationsCount">{{ total_registrations }}</h2>
+                <p>Total Registrations</p>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="section-header">
+            <h2><i class="fas fa-list"></i> Your Events</h2>
+        </div>
+
+        <!-- EVENTS GRID -->
+        <div class="events" id="eventsGrid">
+            {% if events %}
+            {% for event in events %}
+            <div class="event-card" data-event-id="{{ event.id }}">
+                <div class="event-poster">
+                    {% if event.poster %}
+                    <img src="{{ event.poster.url }}" alt="{{ event.title }}" class="poster-img" data-fallback-src="{% static 'img/placeholder.png' %}">
+                    {% else %}
+                    <div class="poster-fallback">
+                        <i class="fa-solid fa-image fa-3x"></i>
+                        <span>No Poster</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="event-content">
+                    <h3>{{ event.title }}</h3>
+
+                    <p>
+                        <i class="fa-solid fa-layer-group"></i>
+                        {{ event.category.name }}
+                    </p>
+
+                    <p>
+                        <i class="fa-solid fa-location-dot"></i>
+                        {{ event.venue }}
+                    </p>
+
+                    <p>
+                        <i class="fa-solid fa-calendar"></i>
+                        {{ event.date }} | {{ event.time }}
+                    </p>
+
+                    <p>
+                        <i class="fa-solid fa-users"></i>
+                        Seats Left: {{ event.seats_left }}/{{ event.total_seats }}
+                    </p>
+
+                    <p>
+                        {% if event.payment_type == "paid" %}
+                        <span style="color:#ef4444;">
+                            <i class="fa-solid fa-money-bill"></i>
+                            Paid (₹{{ event.price }})
+                        </span>
+                        {% else %}
+                        <span style="color:#10b981;">
+                            <i class="fa-solid fa-gift"></i>
+                            Free
+                        </span>
+                        {% endif %}
+                    </p>
+
+                    {% if event.seats_left <= 0 %}
+                    <div class="status closed">
+                        <i class="fa-solid fa-circle-xmark"></i> Full
+                    </div>
+                    {% else %}
+                    <div class="status open">
+                        <i class="fa-solid fa-circle-check"></i> Open
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="no-events">
+            <i class="fa-solid fa-calendar-xmark fa-2x"></i>
+            <p>No events created yet.</p>
+            <a href="{% url 'add_event' %}" class="explore-btn" style="margin-top:15px; display:inline-block;">
+                <i class="fas fa-plus"></i> Create Your First Event
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEventModal()">&times;</span>
+            <div id="eventDetailContent">
+                <!-- Content will be loaded here via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/organizer-dashboard.js' %}"></script>
+    <script>
+        // noinspection JSValidateTypes
+        // <editor-fold desc="Django Template Data">
+        eventsData = [
+            {% for event in events %}
+            {
+                id: {{ event.id }},
+                title: "{{ event.title|escapejs }}",
+                description: "{{ event.description|escapejs }}",
+                category: "{{ event.category.name|escapejs }}",
+                college: "{{ event.college.name|escapejs }}",
+                region: "{{ event.region.name|escapejs }}",
+                date: "{{ event.date }}",
+                time: "{{ event.time|escapejs }}",
+                venue: "{{ event.venue|escapejs }}",
+                paymentType: "{{ event.payment_type|escapejs }}",
+                price: "{{ event.price|default:0 }}",
+                seatsLeft: {{ event.seats_left }},
+                totalSeats: {{ event.total_seats }},
+                poster: "{% if event.poster %}{{ event.poster.url|escapejs }}{% endif %}"
+            }{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        ];
+        // </editor-fold>
+    </script>
+
+</body>
+
+</html>
